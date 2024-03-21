@@ -1,0 +1,29 @@
+# 파이프라인 배포용---------------------------------------------------------------------------------------------
+
+version: "3.2"
+services:
+  was:
+    container_name: tk_was
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: kimgh5303/tk_was:tier
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.40.10:3306/ticket?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "1234"
+    networks:
+      - web
+      - was
+    volumes:
+      - /root/was/webapps:/usr/local/tomcat/webapps
+      - /root/was/logs:/usr/local/tomcat/logs
+      - /root/was/conf:/usr/local/tomcat/conf
+networks:
+  web:
+    external: true
+  was:
+    external: true

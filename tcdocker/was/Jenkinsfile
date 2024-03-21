@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    stages {
+        // 실행 파일 빌드
+        stage('Build') {
+            steps {
+                sh 'chmod +x ./gradlew'
+                sh './gradlew build -x test'
+            }
+        }
+        // 빌드 파일 테스트
+        stage('Test') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+        // 컨테이너 중지
+        stage('Prepare Docker Environment') {
+            steps {
+                script {
+                    // 기존에 실행 중인 컨테이너 중지 및 제거
+                    sh 'docker ps -q --filter "name=tk_was" | grep -q . && docker stop tk_was && docker rm tk_was || true'
+                }
+            }
+        }
+        // 컨테이너 실행
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    // Docker Compose를 사용해 서비스 빌드 및 실행
+                    sh 'docker-compose -f docker-compose.yaml up --build -d'
+                }
+            }
+        }
+    }
+}
