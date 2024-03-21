@@ -1,0 +1,31 @@
+# 빌드용-------------------------------------
+version: "3.2"
+services:  
+  db:
+    container_name: tk_db
+    build:
+      context: ./db
+      dockerfile: dockerfile
+    image: kimgh5303/tk_db:tier
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+
+
+# 서버용------------------------------------
+# -----------------------------------------
+# -----------------------------------------
+version: "3.2"
+services:
+  db:
+    container_name: tk_db
+    image: kimgh5303/tk_db:tier
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    networks:
+      - db
+networks:
+   db:
+     external:
+       name: db

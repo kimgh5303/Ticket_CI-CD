@@ -1,0 +1,8 @@
+# Squid 이미지를 기반으로 합니다.
+FROM sameersbn/squid:3.5.27-2
+
+# 호스트의 squid.conf 파일을 이미지 내부로 복사합니다.
+COPY squid.conf /etc/squid/squid.conf
+
+# 컨테이너 실행 시 Squid를 시작합니다.
+CMD ["squid", "-NYCd", "1"]

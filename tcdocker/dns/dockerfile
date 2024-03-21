@@ -1,0 +1,6 @@
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y bind9 dnsutils systemctl
+COPY named.conf.local /etc/bind/named.conf.local
+COPY db.tplust.kgh /etc/bind/zones/db.tplust.kgh
+COPY db.192.168.30 /etc/bind/zones/db.192.168.30
+CMD ["named", "-g", "-c", "/etc/bind/named.conf"]

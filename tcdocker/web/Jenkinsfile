@@ -1,0 +1,42 @@
+pipeline {
+    agent any
+    stages {
+        // Node.js 애플리케이션 빌드
+        stage('Node.js Build') {
+            steps {
+                script {
+                    // Node.js 애플리케이션 빌드를 위한 커맨드
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
+            }
+        }
+        // 빌드된 애플리케이션 테스트
+        stage('Test') {
+            steps {
+                script {
+                    // 테스트를 실행하는 커맨드
+                    sh 'npm test'
+                }
+            }
+        }
+        // 컨테이너 환경 준비
+        stage('Prepare Docker Environment') {
+            steps {
+                script {
+                    // 기존에 실행 중인 컨테이너 중지 및 제거
+                    sh 'docker ps -q --filter "name=tk_web" | grep -q . && docker stop tk_web && docker rm tk_web || true'
+                }
+            }
+        }
+        // Docker Compose를 이용한 배포
+        stage('Deploy with Docker Compose') {
+            steps {
+                script {
+                    // Docker Compose를 사용해 서비스 배포
+                    sh 'docker-compose -f docker-compose.yaml up --build -d'
+                }
+            }
+        }
+    }
+}
